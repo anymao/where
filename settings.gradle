@@ -1,0 +1,5 @@
+rootProject.name = "Where"
+include ':demo'
+include ':where'
+include ':where-plugin'
+
