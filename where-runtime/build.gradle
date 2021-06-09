@@ -5,7 +5,7 @@ plugins {
 }
 
 group="com.anymore"
-archivesBaseName="where"
+archivesBaseName="where-runtime"
 
 android {
     compileSdkVersion 30

@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils
 import com.anymore.where.gradle.Logger
 import org.objectweb.asm.*
 import java.io.File
-import java.io.InputStream
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
@@ -12,16 +11,13 @@ import java.util.zip.ZipEntry
 /**
  * Created by anymore on 2021/4/24.
  */
-internal class RegisterCodeGenerator(private val logger: Logger) {
+internal class AppCompatActivityCodeHacker(private val logger: Logger) {
 
-    fun insert(jarFile: File, scannedIndexClasses: MutableCollection<String>): File {
-        return insertRegisterCodeToBuilder(jarFile, scannedIndexClasses)
+    fun insert(jarFile: File): File {
+        return insertRegisterCodeToBuilder(jarFile)
     }
 
-    private fun insertRegisterCodeToBuilder(originJar: File, scannedIndexClasses: MutableCollection<String>): File {
-        if (scannedIndexClasses.isEmpty()) {
-            return originJar
-        }
+    private fun insertRegisterCodeToBuilder(originJar: File): File {
         val optJar = File(originJar.parent, originJar.name + ".opt")
         if (optJar.exists()) {
             optJar.delete()
@@ -32,9 +28,9 @@ internal class RegisterCodeGenerator(private val logger: Logger) {
                 val zip = ZipEntry(jarEntry.name)
                 jarFile.getInputStream(zip).use {
                     os.putNextEntry(zip)
-                    if (jarEntry.name == EVENTBUS_BUILDER_NAME) {
+                    if (jarEntry.name == ANDROIDX_APPCOMPATACTIVITY_CLASS) {
                         logger.i("insert code to class:>>${jarEntry.name}")
-                        val optedByteCode = hackEventBusBuilderConstructor(it, scannedIndexClasses)
+                        val optedByteCode = hackActivityDispatchTouchEvent(it)
                         os.write(optedByteCode)
                     } else {
                         os.write(IOUtils.toByteArray(it))
@@ -51,35 +47,28 @@ internal class RegisterCodeGenerator(private val logger: Logger) {
         return originJar
     }
 
-    private fun hackEventBusBuilderConstructor(inputStream: InputStream, scannedIndexClasses: MutableCollection<String>): ByteArray {
+    private fun hackActivityDispatchTouchEvent(inputStream: InputStream): ByteArray {
         return inputStream.use {
             val cr = ClassReader(it)
             val cw = ClassWriter(cr, 0)
-            val visitor = InsertClassVisitor(Opcodes.ASM6, cw, scannedIndexClasses)
+            val visitor = InsertClassVisitor(Opcodes.ASM6, cw)
             cr.accept(visitor, ClassReader.EXPAND_FRAMES)
             cw.toByteArray()
         }
     }
 
-    private inner class InsertClassVisitor(api: Int, classVisitor: ClassVisitor?, private val scannedIndexClasses: MutableCollection<String>) : ClassVisitor(api, classVisitor) {
+    private inner class InsertClassVisitor(api: Int, classVisitor: ClassVisitor?) : ClassVisitor(api, classVisitor) {
         override fun visitMethod(access: Int, name: String?, descriptor: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
             var mv = super.visitMethod(access, name, descriptor, signature, exceptions)
-            if (name == CLASS_STATIC_BLOCK) {
-                mv = InsertMethodVisitor(Opcodes.ASM6, mv, scannedIndexClasses)
-            }
+
             return mv
         }
     }
 
-    private inner class InsertMethodVisitor(api: Int, methodVisitor: MethodVisitor?, val scannedIndexClasses: MutableCollection<String>) : MethodVisitor(api, methodVisitor) {
+    private inner class InsertMethodVisitor(api: Int, methodVisitor: MethodVisitor?) : MethodVisitor(api, methodVisitor) {
         override fun visitInsn(opcode: Int) {
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
-                scannedIndexClasses.forEach {
-                    mv.visitTypeInsn(Opcodes.NEW, it)
-                    mv.visitInsn(Opcodes.DUP)
-                    mv.visitMethodInsn(Opcodes.INVOKESPECIAL, it, "<init>", "()V", false)
-                    mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/List", "add", "(L$EVENTBUS_INDEX_INTERFACE_NAME;)V", false)
-                }
+
             }
             super.visitInsn(opcode)
         }
