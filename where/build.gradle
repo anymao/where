@@ -1,10 +1,10 @@
 plugins {
-    `kotlin-dsl`
-    id("com.github.dcendents.android-maven")
+    id 'com.github.dcendents.android-maven'
+    id 'kotlin'
 }
 
-group="com.anymore"
-
+group = "com.anymore"
+archivesBaseName = "where"
 
 repositories {
     google()
