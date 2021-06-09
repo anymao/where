@@ -7,7 +7,7 @@ import org.gradle.api.Project
  */
 internal class Logger(project: Project) {
     private val sLogger = project.logger
-    private val tag = "EventBusRegister:>>${project.name}"
+    private val tag = "Where:>>${project.name}"
 
     fun t(message: String){
         sLogger.trace("[$tag]:$message")

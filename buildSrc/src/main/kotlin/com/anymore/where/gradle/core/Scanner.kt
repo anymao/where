@@ -29,6 +29,7 @@ internal class Scanner(private val logger: Logger) {
                 }
                 logger.i(name)
                 if (ANDROIDX_APPCOMPATACTIVITY_CLASS == name) {
+                    logger.tell("find class:$name")
                     appCompatActivityClass = dest
                 }
             }

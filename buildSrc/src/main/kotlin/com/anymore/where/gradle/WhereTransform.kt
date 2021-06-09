@@ -20,7 +20,7 @@ class WhereTransform internal constructor(
 
     private val mScanner = Scanner(logger)
 
-    override fun getName() = "EventBusRegisterTransform"
+    override fun getName() = "WhereTransform"
 
     override fun getInputTypes() = TransformManager.CONTENT_CLASS.orEmpty()
 

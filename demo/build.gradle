@@ -1,8 +1,10 @@
+import com.anymore.where.gradle.WherePlugin
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
 }
-
+apply plugin: WherePlugin
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
