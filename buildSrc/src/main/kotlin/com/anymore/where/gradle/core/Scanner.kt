@@ -9,7 +9,7 @@ import java.util.jar.JarFile
  */
 internal class Scanner(private val logger: Logger) {
 
-    var appCompatActivityClass: File? = null
+    var appCompatJar: File? = null
         private set
 
     fun shouldProcessJar(path: String): Boolean {
@@ -30,7 +30,7 @@ internal class Scanner(private val logger: Logger) {
                 logger.i(name)
                 if (ANDROIDX_APPCOMPATACTIVITY_CLASS == name) {
                     logger.tell("find class:$name")
-                    appCompatActivityClass = dest
+                    appCompatJar = dest
                 }
             }
         }

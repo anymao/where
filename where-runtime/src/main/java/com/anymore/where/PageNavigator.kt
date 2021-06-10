@@ -39,10 +39,10 @@ object PageNavigator {
     }
 
     @JvmStatic
-    fun onTouch(context: Context, event: MotionEvent?, touchTarget: Any?) {
-        if (event == null || touchTarget == null) return
+    fun onTouch(context: Context, event: MotionEvent?, name: String?) {
+        if (event == null || name.isNullOrBlank()) return
         if (isTouchValid(event)) {
-            toast(context, touchTarget::class.qualifiedName)
+            toast(context, name)
         }
     }
 

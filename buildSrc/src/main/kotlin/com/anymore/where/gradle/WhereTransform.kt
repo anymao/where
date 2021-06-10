@@ -4,7 +4,7 @@ import com.android.build.api.transform.Format
 import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformInvocation
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.anymore.where.gradle.core.AppCompatActivityCodeHacker
+import com.anymore.where.gradle.core.AppCompatCodeHacker
 import com.anymore.where.gradle.core.Scanner
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
@@ -31,6 +31,7 @@ class WhereTransform internal constructor(
     override fun transform(transformInvocation: TransformInvocation?) {
         val start = System.currentTimeMillis()
         logger.tell("transform start")
+        transformInvocation?.outputProvider?.deleteAll()
         super.transform(transformInvocation)
         transformInvocation?.inputs?.forEach {
             //遍历jar
@@ -60,10 +61,10 @@ class WhereTransform internal constructor(
             }
         }
         logger.tell("transform end,with[${System.currentTimeMillis() - start}ms]")
-        val appCompatActivityClass = mScanner.appCompatActivityClass
+        val appCompatActivityClass = mScanner.appCompatJar
         if (appCompatActivityClass != null) {
             logger.i("modify jar of:${appCompatActivityClass.name}")
-            AppCompatActivityCodeHacker(logger).insert(appCompatActivityClass)
+            AppCompatCodeHacker(logger).insert(appCompatActivityClass)
         }
     }
 
