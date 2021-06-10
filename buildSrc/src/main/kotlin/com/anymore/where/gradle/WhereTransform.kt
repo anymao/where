@@ -53,6 +53,11 @@ class WhereTransform internal constructor(
                 }
                 FileUtils.copyFile(src, dest)
             }
+
+            it?.directoryInputs?.forEach { dir ->
+                val dest = transformInvocation.outputProvider.getContentLocation(dir.name, dir.contentTypes, dir.scopes, Format.DIRECTORY)
+                FileUtils.copyDirectory(dir.file, dest)
+            }
         }
         logger.tell("transform end,with[${System.currentTimeMillis() - start}ms]")
         val appCompatActivityClass = mScanner.appCompatActivityClass
@@ -61,4 +66,5 @@ class WhereTransform internal constructor(
             AppCompatActivityCodeHacker(logger).insert(appCompatActivityClass)
         }
     }
+
 }

@@ -1,8 +1,8 @@
-
 package com.anymore.where
 
 import android.content.Context
 import android.graphics.Rect
+import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
@@ -14,6 +14,12 @@ import androidx.fragment.app.Fragment
  */
 object PageNavigator {
     private const val TAG = "PageNavigator"
+
+    @JvmStatic
+    private var lastTriggerTime = 0L
+    private const val MIN_TRIGGER_TIME = 3 * 1000L
+
+    @JvmStatic
     fun onActivityTouchEvent(activity: AppCompatActivity, event: MotionEvent?) {
         if (event == null) return
         if (isTouchValid(event)) {
@@ -32,11 +38,27 @@ object PageNavigator {
         }
     }
 
-    private fun isTouchValid(event: MotionEvent): Boolean {
-        val action = event.action
-        return action in listOf(MotionEvent.ACTION_POINTER_UP) && event.pointerCount == 3
+    @JvmStatic
+    fun onTouch(context: Context, event: MotionEvent?, touchTarget: Any?) {
+        if (event == null || touchTarget == null) return
+        if (isTouchValid(event)) {
+            toast(context, touchTarget::class.qualifiedName)
+        }
     }
 
+    @JvmStatic
+    private fun isTouchValid(event: MotionEvent): Boolean {
+        if (SystemClock.elapsedRealtime() - lastTriggerTime < MIN_TRIGGER_TIME) return false
+        val action = event.action
+        val res = action in listOf(MotionEvent.ACTION_POINTER_UP) && event.pointerCount == 3
+        return res.apply {
+            if (this) {
+                lastTriggerTime = SystemClock.elapsedRealtime()
+            }
+        }
+    }
+
+    @JvmStatic
     @Suppress("DEPRECATION")
     private fun onFragmentTouched(
         fragment: Fragment?,
@@ -64,11 +86,13 @@ object PageNavigator {
         }
     }
 
+    @JvmStatic
     private fun log(message: String?) {
         if (message.isNullOrBlank()) return
         Log.d(TAG, message)
     }
 
+    @JvmStatic
     private fun toast(context: Context, message: String?) {
         if (message.isNullOrBlank()) return
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
