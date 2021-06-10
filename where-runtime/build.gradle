@@ -4,9 +4,6 @@ plugins {
     id 'com.github.dcendents.android-maven'
 }
 
-group="com.anymore"
-archivesBaseName="where-runtime"
-
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"

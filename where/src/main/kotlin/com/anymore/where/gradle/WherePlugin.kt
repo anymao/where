@@ -4,6 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.hasPlugin
 
@@ -16,7 +17,10 @@ class WherePlugin : Plugin<Project> {
         val isApp = target.plugins.hasPlugin(AppPlugin::class)
         if (isApp) {
             val android = target.extensions.getByType(AppExtension::class)
-            android.registerTransform(WhereTransform(target,logger))
+            android.registerTransform(WhereTransform(target, logger))
+            target.dependencies {
+                add("debugImplementation", "com.github.anymao:where:master-SNAPSHOT")
+            }
         }
     }
 }

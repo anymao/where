@@ -1,10 +1,7 @@
-import com.anymore.where.gradle.WherePlugin
-
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
 }
-apply plugin: WherePlugin
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -42,7 +39,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    implementation project(':where-runtime')
+//    implementation project(':where-runtime')
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
