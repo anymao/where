@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    `maven-publish`
+    id("android-maven")
     id("groovy")
     id("com.github.dcendents.android-maven")
 }
@@ -19,13 +19,13 @@ dependencies {
     implementation("commons-codec:commons-codec:1.15")
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "com.github.anymao"
-            artifactId = "where"
-            version = "1.0.0"
-            from(components["java"])
-        }
-    }
-}
+//publishing {
+//    publications {
+//        create<MavenPublication>("maven") {
+//            groupId = "com.github.anymao"
+//            artifactId = "where"
+//            version = "1.0.0"
+//            from(components["java"])
+//        }
+//    }
+//}
