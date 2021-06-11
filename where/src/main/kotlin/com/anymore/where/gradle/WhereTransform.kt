@@ -60,12 +60,12 @@ class WhereTransform internal constructor(
                 FileUtils.copyDirectory(dir.file, dest)
             }
         }
-        logger.tell("transform end,with[${System.currentTimeMillis() - start}ms]")
         val appCompatActivityClass = mScanner.appCompatJar
         if (appCompatActivityClass != null) {
             logger.i("modify jar of:${appCompatActivityClass.name}")
             AppCompatCodeHacker(logger).insert(appCompatActivityClass)
         }
+        logger.tell("transform end,with[${System.currentTimeMillis() - start}ms]")
     }
 
 }

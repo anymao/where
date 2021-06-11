@@ -1,6 +1,5 @@
 package com.anymore.where.demo
 
-import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 
 /**

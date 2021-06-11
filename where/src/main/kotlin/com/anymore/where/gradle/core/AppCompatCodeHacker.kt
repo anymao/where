@@ -85,7 +85,7 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
         ): MethodVisitor {
             val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
             if (name == HACK_METHOD) {
-                logger.tell("override the dispatchTouchEventMethod")
+                logger.i("override the dispatchTouchEventMethod")
                 overrideDispatchTouchEvent = true
                 return AppCompatActivityInsertMethodVisitor(api, mv)
             }
@@ -94,7 +94,7 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
 
         override fun visitEnd() {
             if (!overrideDispatchTouchEvent) {
-                logger.tell("the target class don't override dispatchTouchEventMethod,so we need insert override code")
+                logger.i("the target class don't override dispatchTouchEventMethod,so we need insert override code")
                 insertOverrideCode()
                 return
             }
@@ -102,7 +102,6 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
         }
 
         private fun insertOverrideCode() {
-            logger.tell(cv.javaClass.name)
             val mv = cv.visitMethod(
                 ACC_PUBLIC,
                 "dispatchTouchEvent",
@@ -133,7 +132,7 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
             mv.visitMaxs(2, 2)
             mv.visitEnd()
             cv.visitEnd()
-            logger.tell("insertOverrideCode finished")
+            logger.i("insertOverrideCode finished")
         }
     }
 
@@ -200,7 +199,7 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
         ): MethodVisitor {
             val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
             if (name == HACK_METHOD) {
-                logger.tell("override the dispatchTouchEventMethod")
+                logger.i("override the dispatchTouchEventMethod")
                 overrideDispatchTouchEvent = true
                 return AppCompatDialogInsertMethodVisitor(api, mv)
             }
@@ -314,7 +313,7 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
         ): MethodVisitor {
             val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
             if (name == "setupDialog") {
-                logger.tell("override the setupDialog")
+                logger.i("override the setupDialog")
                 return AppCompatDialogFragmentSetupDialogMethodVisitor(api, mv)
             }
             return mv
@@ -331,7 +330,7 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
         override fun visitVarInsn(opcode: Int, value: Int) {
             if (!hacked && opcode == ASTORE && value == 3) {
                 super.visitVarInsn(opcode, value)
-                logger.tell("hack setupDialog")
+                logger.i("hack setupDialog")
                 mv.visitVarInsn(ALOAD, 3)
                 mv.visitVarInsn(ALOAD, 0)
                 mv.visitMethodInsn(

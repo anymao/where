@@ -15,11 +15,17 @@ class WherePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val logger = Logger(target)
         val isApp = target.plugins.hasPlugin(AppPlugin::class)
+        target.extensions.create("where", WhereExtension::class.java)
         if (isApp) {
             val android = target.extensions.getByType(AppExtension::class)
-            android.registerTransform(WhereTransform(target, logger))
-            target.dependencies {
-                add("debugImplementation", "com.github.anymao:where:master-SNAPSHOT")
+            val enabled = target.extensions.getByType(WhereExtension::class).enabled
+            if (enabled) {
+                target.dependencies {
+                    add("debugImplementation", "com.github.anymao:where:master-SNAPSHOT")
+                }
+                android.registerTransform(WhereTransform(target, logger))
+            } else {
+                logger.tell("the where plugin is disabled,skip registerTransform")
             }
         }
     }
