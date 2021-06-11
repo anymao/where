@@ -198,7 +198,13 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
             exceptions: Array<out String>?
         ): MethodVisitor {
             val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
-            if (name == HACK_METHOD) {
+            if (access == ACC_PUBLIC && name == "<init>" && descriptor == "(Landroid/content/Context;I)V") {
+                logger.tell("hack public AppCompatDialog(Context context, int theme)")
+                return AppCompatDialogConstructorHacker(api, mv)
+            } else if (access == ACC_PROTECTED && name == "<init>" && descriptor == "(Landroid/content/Context;ZLandroid/content/DialogInterface\$OnCancelListener;)V") {
+                logger.tell("hack protected AppCompatDialog(Context context, boolean cancelable,OnCancelListener cancelListener)")
+                return AppCompatDialogConstructorHacker(api, mv)
+            } else if (name == HACK_METHOD) {
                 logger.i("override the dispatchTouchEventMethod")
                 overrideDispatchTouchEvent = true
                 return AppCompatDialogInsertMethodVisitor(api, mv)
@@ -264,6 +270,40 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
             mv.visitInsn(IRETURN)
             mv.visitMaxs(3, 2)
             mv.visitEnd()
+        }
+    }
+
+    private inner class AppCompatDialogConstructorHacker(
+        api: Int,
+        methodVisitor: MethodVisitor?
+    ) :
+        MethodVisitor(api, methodVisitor) {
+        override fun visitInsn(opcode: Int) {
+            if (opcode == RETURN) {
+                mv.visitVarInsn(ALOAD, 0)
+                mv.visitVarInsn(ALOAD, 0)
+                mv.visitMethodInsn(
+                    INVOKEVIRTUAL,
+                    "java/lang/Object",
+                    "getClass",
+                    "()Ljava/lang/Class;",
+                    false
+                )
+                mv.visitMethodInsn(
+                    INVOKEVIRTUAL,
+                    "java/lang/Class",
+                    "getCanonicalName",
+                    "()Ljava/lang/String;",
+                    false
+                )
+                mv.visitFieldInsn(
+                    PUTFIELD,
+                    "androidx/appcompat/app/AppCompatDialog",
+                    "whereName",
+                    "Ljava/lang/String;"
+                )
+            }
+            super.visitInsn(opcode)
         }
     }
 
@@ -353,6 +393,18 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
                     "whereName",
                     "Ljava/lang/String;"
                 )
+                mv.visitLdcInsn("lym");
+                mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
+                mv.visitInsn(DUP);
+                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+                mv.visitLdcInsn("whereName:");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                mv.visitVarInsn(ALOAD, 3);
+                mv.visitFieldInsn(GETFIELD, "androidx/appcompat/app/AppCompatDialog", "whereName", "Ljava/lang/String;");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+                mv.visitMethodInsn(INVOKESTATIC, "android/util/Log", "e", "(Ljava/lang/String;Ljava/lang/String;)I", false);
+                mv.visitInsn(POP);
                 hacked = true
             } else {
                 super.visitVarInsn(opcode, value)

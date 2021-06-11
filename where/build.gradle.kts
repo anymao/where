@@ -2,7 +2,7 @@ plugins {
     `kotlin-dsl`
     `maven-publish`
     id("groovy")
-//    id("com.github.dcendents.android-maven")
+    id("com.github.dcendents.android-maven")
 }
 
 repositories {
@@ -24,7 +24,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.github.anymao"
             artifactId = "where"
-            version = "0.0.1"
+            version = "1.0.0"
             from(components["java"])
         }
     }
