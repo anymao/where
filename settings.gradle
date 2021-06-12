@@ -1,5 +1,5 @@
 rootProject.name = "Where"
 include ':demo'
-include ':where-runtime'
+//include ':where-runtime'
 include ':where'
 
