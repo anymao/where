@@ -43,6 +43,7 @@ object PageNavigator {
         if (event == null || name.isNullOrBlank()) return
         if (isTouchValid(event)) {
             toast(context, name)
+            log("Current Page:\n$name")
         }
     }
 
