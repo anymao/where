@@ -393,18 +393,6 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
                     "whereName",
                     "Ljava/lang/String;"
                 )
-                mv.visitLdcInsn("lym");
-                mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
-                mv.visitInsn(DUP);
-                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
-                mv.visitLdcInsn("whereName:");
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-                mv.visitVarInsn(ALOAD, 3);
-                mv.visitFieldInsn(GETFIELD, "androidx/appcompat/app/AppCompatDialog", "whereName", "Ljava/lang/String;");
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-                mv.visitMethodInsn(INVOKESTATIC, "android/util/Log", "e", "(Ljava/lang/String;Ljava/lang/String;)I", false);
-                mv.visitInsn(POP);
                 hacked = true
             } else {
                 super.visitVarInsn(opcode, value)
