@@ -24,7 +24,7 @@ Where是一个Android debug插件，在debug环境下，可以通过三指点击
    ```groovy
        dependencies {
           ...
-           classpath 'com.github.anymao.where:where:master-SNAPSHOT'
+           classpath 'com.github.anymao.where:where:1.0.3'
            // NOTE: Do not place your application dependencies here; they belong
            // in the individual module build.gradle.kts.kts files
        }
