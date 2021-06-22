@@ -15,15 +15,21 @@ class WherePlugin : Plugin<Project> {
         val isApp = target.plugins.hasPlugin(AppPlugin::class)
         if (isApp) {
             val android = target.extensions.getByType(AppExtension::class)
-            val enable = true
-            val isDebug = android.applicationVariants.any { it.buildType.isDebuggable }
-            if (enable && isDebug) {
-                target.dependencies {
-                    add("debugImplementation", "com.github.anymao.where:where-runtime:1.0.3")
+            target.extensions.create<WhereExtension>("where")
+            val appAssembleRelease = ":${target.name}:assembleRelease"
+            val isDebug = !target.gradle.startParameter.taskNames.any { it == appAssembleRelease }
+            target.dependencies {
+                add("debugImplementation", "com.github.anymao.where:where-runtime:1.0.3")
+            }
+            target.afterEvaluate {
+                val enable = target.extensions.getByName<WhereExtension>("where").enable
+                logger.i("where enable:$enable")
+                if (enable && isDebug) {
+                    logger.tell("${target.name} debuggable is true,register transform!")
+                    android.registerTransform(WhereTransform(target, logger))
+                } else {
+                    logger.tell("the where plugin is disabled or buildType is release,skip registerTransform")
                 }
-                android.registerTransform(WhereTransform(target, logger))
-            } else {
-                logger.tell("the where plugin is disabled or buildType is release,skip registerTransform")
             }
         }
     }
