@@ -16,13 +16,14 @@ class WherePlugin : Plugin<Project> {
         if (isApp) {
             val android = target.extensions.getByType(AppExtension::class)
             val enable = true
-            if (enable) {
+            val isDebug = android.applicationVariants.any { it.buildType.isDebuggable }
+            if (enable && isDebug) {
                 target.dependencies {
                     add("debugImplementation", "com.github.anymao.where:where-runtime:1.0.3")
                 }
                 android.registerTransform(WhereTransform(target, logger))
             } else {
-                logger.tell("the where plugin is disabled,skip registerTransform")
+                logger.tell("the where plugin is disabled or buildType is release,skip registerTransform")
             }
         }
     }

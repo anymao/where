@@ -24,7 +24,7 @@ Where是一个Android debug插件，在debug环境下，可以通过三指点击
    ```groovy
        dependencies {
           ...
-           classpath 'com.github.anymao.where:where:1.0.3'
+           classpath 'com.github.anymao.where:where:master-SNAPSHOT'
            // NOTE: Do not place your application dependencies here; they belong
            // in the individual module build.gradle.kts.kts files
        }
@@ -538,37 +538,32 @@ Where是一个Android debug插件，在debug环境下，可以通过三指点击
    3. AppCompatDialogFragment
 
       ```java
-      package androidx.appcompat.app;
-      
-      import android.app.Dialog;
-      import android.os.Bundle;
-      import android.util.Log;
-      import androidx.fragment.app.DialogFragment;
-      
-      public class AppCompatDialogFragment extends DialogFragment {
-        public Dialog onCreateDialog(Bundle paramBundle) {
-          return new AppCompatDialog(getContext(), getTheme());
-        }
-        
-        public void setupDialog(Dialog paramDialog, int paramInt) {
-          if (paramDialog instanceof AppCompatDialog) {
-            AppCompatDialog appCompatDialog = (AppCompatDialog)paramDialog;
-            appCompatDialog.whereName = getClass().getCanonicalName();
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("whereName:");
-            stringBuilder.append(appCompatDialog.whereName);
-            Log.e("lym", stringBuilder.toString());
-            if (paramInt != 1 && paramInt != 2) {
-              if (paramInt != 3)
-                return; 
-              paramDialog.getWindow().addFlags(24);
-            } 
-            appCompatDialog.supportRequestWindowFeature(1);
-            return;
-          } 
-          super.setupDialog(paramDialog, paramInt);
-        }
-      }
+     package androidx.appcompat.app;
+
+     import android.app.Dialog;
+     import android.os.Bundle;
+     import androidx.fragment.app.DialogFragment;
+
+     public class AppCompatDialogFragment extends DialogFragment {
+       public Dialog onCreateDialog(Bundle paramBundle) {
+         return new AppCompatDialog(getContext(), getTheme());
+       }
+
+       public void setupDialog(Dialog paramDialog, int paramInt) {
+         if (paramDialog instanceof AppCompatDialog) {
+           AppCompatDialog appCompatDialog = (AppCompatDialog)paramDialog;
+           appCompatDialog.whereName = getClass().getCanonicalName();
+           if (paramInt != 1 && paramInt != 2) {
+             if (paramInt != 3)
+               return;
+             paramDialog.getWindow().addFlags(24);
+           }
+           appCompatDialog.supportRequestWindowFeature(1);
+           return;
+         }
+         super.setupDialog(paramDialog, paramInt);
+       }
+     }
       ```
 
 ## 写在最后
