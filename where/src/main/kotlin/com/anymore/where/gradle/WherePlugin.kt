@@ -18,7 +18,7 @@ class WherePlugin : Plugin<Project> {
             val enable = true
             if (enable) {
                 target.dependencies {
-                    add("debugImplementation", "com.github.anymao.Where:where-runtime:1.0.2")
+                    add("debugImplementation", "com.github.anymao.where:where-runtime:1.0.3")
                 }
                 android.registerTransform(WhereTransform(target, logger))
             } else {
