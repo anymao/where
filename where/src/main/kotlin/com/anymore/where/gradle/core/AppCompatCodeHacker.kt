@@ -32,21 +32,21 @@ internal class AppCompatCodeHacker(private val logger: Logger) {
                 jarFile.getInputStream(zip).use {
                     os.putNextEntry(zip)
                     when (jarEntry.name) {
-                        ANDROIDX_APPCOMPATACTIVITY_CLASS -> {
+                        ANDROIDX_FRAGMENTACTIVITY_CLASS -> {
                             logger.i("insert code to class:>>${jarEntry.name}")
                             val optedByteCode = hackActivityDispatchTouchEvent(it)
                             os.write(optedByteCode)
                         }
-                        ANDROIDX_APPCOMPATDIALOG_CLASS -> {
-                            logger.i("insert code to class:>>${jarEntry.name}")
-                            val optedByteCode = hackAppCompatDialog(it)
-                            os.write(optedByteCode)
-                        }
-                        ANDROIDX_APPCOMPATDIALOGFRAGMENT_CLASS -> {
-                            logger.i("insert code to class:>>${jarEntry.name}")
-                            val optedByteCode = hackAppCompatDialogFragment(it)
-                            os.write(optedByteCode)
-                        }
+//                        ANDROIDX_APPCOMPATDIALOG_CLASS -> {
+//                            logger.i("insert code to class:>>${jarEntry.name}")
+//                            val optedByteCode = hackAppCompatDialog(it)
+//                            os.write(optedByteCode)
+//                        }
+//                        ANDROIDX_APPCOMPATDIALOGFRAGMENT_CLASS -> {
+//                            logger.i("insert code to class:>>${jarEntry.name}")
+//                            val optedByteCode = hackAppCompatDialogFragment(it)
+//                            os.write(optedByteCode)
+//                        }
                         else -> {
                             os.write(IOUtils.toByteArray(it))
                         }

@@ -28,7 +28,7 @@ internal class Scanner(private val logger: Logger) {
                     return@forEach
                 }
                 logger.i(name)
-                if (ANDROIDX_APPCOMPATACTIVITY_CLASS == name) {
+                if (ANDROIDX_FRAGMENTACTIVITY_CLASS == name) {
                     logger.tell("find class:$name")
                     appCompatJar = dest
                 }

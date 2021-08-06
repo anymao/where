@@ -6,8 +6,8 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 
 /**
  * Created by lym on 2021/6/8.
@@ -20,7 +20,7 @@ object PageNavigator {
     private const val MIN_TRIGGER_TIME = 3 * 1000L
 
     @JvmStatic
-    fun onActivityTouchEvent(activity: AppCompatActivity, event: MotionEvent?) {
+    fun onActivityTouchEvent(activity: FragmentActivity, event: MotionEvent?) {
         if (event == null) return
         if (isTouchValid(event)) {
             val builder = StringBuilder()

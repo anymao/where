@@ -19,7 +19,7 @@ class WherePlugin : Plugin<Project> {
             val appAssembleRelease = ":${target.name}:assembleRelease"
             val isDebug = !target.gradle.startParameter.taskNames.any { it == appAssembleRelease }
             target.dependencies {
-                add("debugImplementation", "com.github.anymao.where:where-runtime:1.0.3")
+                add("debugImplementation", "com.github.anymao.where:where-runtime:dev-SNAPSHOT")
             }
             target.afterEvaluate {
                 val enable = target.extensions.getByName<WhereExtension>("where").enable
