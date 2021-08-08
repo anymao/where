@@ -9,7 +9,7 @@ import java.util.jar.JarFile
  */
 internal class Scanner(private val logger: Logger) {
 
-    var appCompatJar: File? = null
+    var fragmentJar: File? = null
         private set
 
     fun shouldProcessJar(path: String): Boolean {
@@ -30,7 +30,7 @@ internal class Scanner(private val logger: Logger) {
                 logger.i(name)
                 if (ANDROIDX_FRAGMENTACTIVITY_CLASS == name) {
                     logger.tell("find class:$name")
-                    appCompatJar = dest
+                    fragmentJar = dest
                 }
             }
         }

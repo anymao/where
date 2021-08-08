@@ -21,13 +21,16 @@ class WherePlugin : Plugin<Project> {
             target.dependencies {
                 add("debugImplementation", "com.github.anymao.where:where-runtime:1.0.4")
             }
+            val transform = WhereTransform(target, logger)
+            android.registerTransform(transform)
             target.afterEvaluate {
                 val enable = target.extensions.getByName<WhereExtension>("where").enable
                 logger.i("where enable:$enable")
                 if (enable && isDebug) {
                     logger.tell("${target.name} debuggable is true,register transform!")
-                    android.registerTransform(WhereTransform(target, logger))
+                    transform.enabled = true
                 } else {
+                    transform.enabled = false
                     logger.tell("the where plugin is disabled or buildType is release,skip registerTransform")
                 }
             }

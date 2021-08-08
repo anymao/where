@@ -4,7 +4,7 @@ import com.android.build.api.transform.Format
 import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformInvocation
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.anymore.where.gradle.core.AppCompatCodeHacker
+import com.anymore.where.gradle.core.FragmentActivityCodeHacker
 import com.anymore.where.gradle.core.Scanner
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
@@ -20,6 +20,8 @@ class WhereTransform internal constructor(
 
     private val mScanner = Scanner(logger)
 
+    var enabled: Boolean = true
+
     override fun getName() = "WhereTransform"
 
     override fun getInputTypes() = TransformManager.CONTENT_CLASS.orEmpty()
@@ -33,37 +35,76 @@ class WhereTransform internal constructor(
         logger.tell("transform start")
         transformInvocation?.outputProvider?.deleteAll()
         super.transform(transformInvocation)
-        transformInvocation?.inputs?.forEach {
-            //遍历jar
-            it?.jarInputs?.forEach { jar ->
-                var destName = jar.name
-                if (jar.name.endsWith(".jar")) {
-                    destName =
-                        jar.name.let { name -> name.subSequence(0, name.length - 4).toString() }
+        if (enabled) {
+            logger.tell("transform is enabled!")
+            transformInvocation?.inputs?.forEach {
+                //遍历jar
+                it?.jarInputs?.forEach { jar ->
+                    var destName = jar.name
+                    if (jar.name.endsWith(".jar")) {
+                        destName =
+                            jar.name.let { name -> name.subSequence(0, name.length - 4).toString() }
+                    }
+                    val hexName = DigestUtils.md2Hex(jar.file.absolutePath)
+                    val src = jar.file
+                    val dest = transformInvocation.outputProvider.getContentLocation(
+                        "${destName}_$hexName",
+                        jar.contentTypes,
+                        jar.scopes,
+                        Format.JAR
+                    )
+                    if (mScanner.shouldProcessJar(src.absolutePath)) {
+                        mScanner.scanJar(src, dest)
+                    }
+                    FileUtils.copyFile(src, dest)
                 }
-                val hexName = DigestUtils.md2Hex(jar.file.absolutePath)
-                val src = jar.file
-                val dest = transformInvocation.outputProvider.getContentLocation(
-                    "${destName}_$hexName",
-                    jar.contentTypes,
-                    jar.scopes,
-                    Format.JAR
-                )
-                if (mScanner.shouldProcessJar(src.absolutePath)) {
-                    mScanner.scanJar(src, dest)
-                }
-                FileUtils.copyFile(src, dest)
-            }
 
-            it?.directoryInputs?.forEach { dir ->
-                val dest = transformInvocation.outputProvider.getContentLocation(dir.name, dir.contentTypes, dir.scopes, Format.DIRECTORY)
-                FileUtils.copyDirectory(dir.file, dest)
+                it?.directoryInputs?.forEach { dir ->
+                    val dest = transformInvocation.outputProvider.getContentLocation(
+                        dir.name,
+                        dir.contentTypes,
+                        dir.scopes,
+                        Format.DIRECTORY
+                    )
+                    FileUtils.copyDirectory(dir.file, dest)
+                }
             }
-        }
-        val appCompatActivityClass = mScanner.appCompatJar
-        if (appCompatActivityClass != null) {
-            logger.i("modify jar of:${appCompatActivityClass.name}")
-            AppCompatCodeHacker(logger).insert(appCompatActivityClass)
+            val fragmentActivityClassJar = mScanner.fragmentJar
+            if (fragmentActivityClassJar != null) {
+                logger.i("modify jar of:${fragmentActivityClassJar.name}")
+                FragmentActivityCodeHacker(logger).insert(fragmentActivityClassJar)
+            }
+        }else{
+            logger.tell("transform is disabled!just copy")
+            transformInvocation?.inputs?.forEach {
+                //遍历jar
+                it?.jarInputs?.forEach { jar ->
+                    var destName = jar.name
+                    if (jar.name.endsWith(".jar")) {
+                        destName =
+                            jar.name.let { name -> name.subSequence(0, name.length - 4).toString() }
+                    }
+                    val hexName = DigestUtils.md2Hex(jar.file.absolutePath)
+                    val src = jar.file
+                    val dest = transformInvocation.outputProvider.getContentLocation(
+                        "${destName}_$hexName",
+                        jar.contentTypes,
+                        jar.scopes,
+                        Format.JAR
+                    )
+                    FileUtils.copyFile(src, dest)
+                }
+
+                it?.directoryInputs?.forEach { dir ->
+                    val dest = transformInvocation.outputProvider.getContentLocation(
+                        dir.name,
+                        dir.contentTypes,
+                        dir.scopes,
+                        Format.DIRECTORY
+                    )
+                    FileUtils.copyDirectory(dir.file, dest)
+                }
+            }
         }
         logger.tell("transform end,with[${System.currentTimeMillis() - start}ms]")
     }
