@@ -2,7 +2,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-//    id("where")
+    id("where")
 }
 
 android {
@@ -34,9 +34,9 @@ android {
     }
 }
 
-//where{
-//    enable=true
-//}
+where{
+    enable=false
+}
 
 dependencies {
 
