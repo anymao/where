@@ -1,8 +1,9 @@
 plugins {
     `kotlin-dsl`
-    id("android-maven")
+//    id("android-maven")
     id("groovy")
-    id("com.github.dcendents.android-maven")
+//    id("com.github.dcendents.android-maven")
+    `maven-publish`
 }
 
 repositories {
@@ -13,19 +14,31 @@ repositories {
 dependencies {
     compileOnly(gradleApi())
     compileOnly(localGroovy())
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.72")
-    implementation("com.android.tools.build:gradle:4.1.3")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.70")
+    implementation("com.android.tools.build:gradle:3.5.0")
     implementation("commons-io:commons-io:2.8.0")
     implementation("commons-codec:commons-codec:1.15")
 }
 
-//publishing {
-//    publications {
-//        create<MavenPublication>("maven") {
-//            groupId = "com.github.anymao"
-//            artifactId = "where"
-//            version = "1.0.0"
-//            from(components["java"])
-//        }
-//    }
-//}
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.anymao.where"
+            artifactId = "where"
+            version = "1.0.0"
+            from(components["kotlin"])
+        }
+    }
+
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url = uri("E:\\mvn")
+        }
+    }
+}

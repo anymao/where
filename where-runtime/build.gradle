@@ -2,7 +2,8 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'com.github.dcendents.android-maven'
-    id 'android-maven'
+    id 'maven'
+    id 'maven-publish'
 }
 
 android {
@@ -49,13 +50,20 @@ artifacts {
     archives sourcesJar
 }
 
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            groupId = 'com.github.anymao'
-//            artifactId = 'where-runtime'
-//            version = '1.0.0'
-////            from components.java
-//        }
-//    }
-//}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.anymao.where'
+            artifactId = 'where-runtime'
+            version = '1.0.0'
+            artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
+        }
+    }
+
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url = "E:\\mvn"
+        }
+    }
+}

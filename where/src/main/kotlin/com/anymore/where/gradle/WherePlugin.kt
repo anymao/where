@@ -19,7 +19,7 @@ class WherePlugin : Plugin<Project> {
             val appAssembleRelease = ":${target.name}:assembleRelease"
             val isDebug = !target.gradle.startParameter.taskNames.any { it == appAssembleRelease }
             target.dependencies {
-                add("debugImplementation", "com.github.anymao.where:where-runtime:1.0.5")
+                add("debugImplementation", "com.anymao.where:where-runtime:1.0.0")
             }
             val transform = WhereTransform(target, logger)
             android.registerTransform(transform)
