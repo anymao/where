@@ -537,7 +537,7 @@ Where是一个Android debug插件，在debug环境下，可以通过三指点击
 
    3. AppCompatDialogFragment
 
-      ```java
+     ```java
      package androidx.appcompat.app;
 
      import android.app.Dialog;
@@ -564,7 +564,7 @@ Where是一个Android debug插件，在debug环境下，可以通过三指点击
          super.setupDialog(paramDialog, paramInt);
        }
      }
-      ```
+     ```
 
 ## 写在最后
 
