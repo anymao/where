@@ -1,0 +1,48 @@
+plugins {
+    id 'maven'
+    id 'groovy'
+}
+
+dependencies {
+    compileOnly(gradleApi())
+    compileOnly(localGroovy())
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.72")
+    implementation("com.android.tools.build:gradle:4.1.3")
+    implementation("commons-io:commons-io:2.8.0")
+    implementation("commons-codec:commons-codec:1.15")
+}
+
+//task sourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.srcDirs
+//    classifier = 'sources'
+//}
+
+//artifacts {
+//    archives sourcesJar
+//}
+
+def group = 'com.anymore'
+def version = '0.0.1-SNAPSHOT'
+def artifactId = 'where'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: 'https://packages.aliyun.com/maven/repository/2202395-release-jr0puW/') {
+                authentication(
+                        userName: '622f0a2d91cb0feebab71d3f',
+                        password: 'Vz1S)umP)IAp'
+                )
+            }
+            snapshotRepository(url: 'https://packages.aliyun.com/maven/repository/2202395-snapshot-3OoSzj/') {
+                authentication(
+                        userName: '622f0a2d91cb0feebab71d3f',
+                        password: 'Vz1S)umP)IAp'
+                )
+            }
+            pom.version = version
+            pom.artifactId = artifactId
+            pom.groupId = group
+        }
+    }
+}
